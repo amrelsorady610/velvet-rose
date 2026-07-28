@@ -445,8 +445,8 @@
             
             cart=[];saveCart();renderCart();closeCheckout();document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartDrawer').classList.remove('open');document.body.style.overflow='';showToast(t('order_success'));navigateTo('home');
             
-            const TELEGRAM_BOT_TOKEN = '8865642646:AAHIOXn4M-ConQuCq88kfVob90fZDW0c8yw';
-const TELEGRAM_CHAT_ID = '-5437082046';
+                        const TELEGRAM_BOT_TOKEN = '8865642646:AAHIOXn4M-ConQuCq88kfVob90fZDW0c8yw';
+            const TELEGRAM_CHAT_ID = '-5437082046';
             const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
             fetch(telegramUrl, {
@@ -459,8 +459,15 @@ const TELEGRAM_CHAT_ID = '-5437082046';
                 })
             })
             .then(response => response.json())
-            .then(data => console.log('Notification sent successfully:', data))
-            .catch(error => console.error('Error sending notification:', error));
+            .then(data => {
+                if(data.ok) {
+                    console.log('تم إرسال الإشعار بنجاح للتليجرام');
+                } else {
+                    console.error('خطأ من تليجرام:', data.description);
+                }
+            })
+            .catch(error => console.error('خطأ في الاتصال:', error));
+
         }
 
         function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.add('show');clearTimeout(toast._timeout);toast._timeout=setTimeout(()=>toast.classList.remove('show'),3500);}

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velvet Rose - متجر لانجري فاخر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #fffaf7; --bg-secondary: #f4ede6; --bg-card: #ffffff; --bg-card-hover: #fcf8f5;
+            --bg-modal: #ffffff; --accent: #b8865c; --accent-light: #d4a574; --accent-dark: #8c6340;
+            --gold: #b8865c; --rose: #d9a5b3; --text-primary: #2d2422; --text-secondary: #6e5e5a;
+            --text-muted: #9e8e8a; --border: #e8dcd5; --border-light: #f0e6e0; --danger: #c0392b;
+            --success: #27ae60; --shadow-lg: 0 20px 60px rgba(184,134,92,0.12); --shadow-md: 0 8px 30px rgba(184,134,92,0.08);
+            --shadow-sm: 0 4px 15px rgba(184,134,92,0.05); --radius-lg: 16px; --radius-md: 10px; --radius-sm: 6px;
+            --transition: 0.3s cubic-bezier(0.4,0,0.2,1); --font-ar: 'Cairo', sans-serif; --font-en: 'Playfair Display', serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:var(--font-ar); background:var(--bg-primary); color:var(--text-primary); min-height:100vh; line-height:1.7; overflow-x:hidden; transition:all var(--transition); }
+        body.ltr { direction:ltr; font-family:var(--font-en); } body.ltr * { font-family:inherit; }
+        body.ltr h1,body.ltr h2,body.ltr h3,body.ltr .logo,body.ltr .section-title,body.ltr .product-name,body.ltr .price { font-family:var(--font-en); }
+        body.ltr .nav-links a,body.ltr .btn,body.ltr input,body.ltr textarea,body.ltr select,body.ltr .review-text,body.ltr .product-desc,body.ltr .cart-item-name { font-family:'Cairo',sans-serif; }
+        ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:var(--bg-primary); } ::-webkit-scrollbar-thumb { background:var(--accent-light); border-radius:3px; }
+        .header { position:sticky; top:0; z-index:1000; background:rgba(255,250,247,0.9); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 2rem; transition:all var(--transition); }
+        .header-inner { max-width:1300px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:70px; }
+        .logo { font-size:1.8rem; font-weight:700; color:var(--accent); letter-spacing:1px; cursor:pointer; text-decoration:none; white-space:nowrap; transition:color var(--transition); }
+        .logo:hover { color:var(--accent-dark); } .logo span { color:var(--rose); font-weight:400; }
+        .nav-links { display:flex; list-style:none; gap:0.2rem; align-items:center; flex-wrap:wrap; justify-content:center; }
+        .nav-links a { color:var(--text-secondary); text-decoration:none; padding:0.5rem 0.85rem; border-radius:25px; font-size:0.82rem; font-weight:500; transition:all var(--transition); white-space:nowrap; cursor:pointer; letter-spacing:0.3px; }
+        .nav-links a:hover,.nav-links a.active { color:var(--accent); background:rgba(184,134,92,0.08); }
+        .header-actions { display:flex; align-items:center; gap:0.6rem; }
+        .user-btn { background:transparent; border:1px solid var(--border); color:var(--text-secondary); padding:0.45rem 0.75rem; border-radius:25px; cursor:pointer; font-size:0.85rem; transition:all var(--transition); white-space:nowrap; font-family:var(--font-ar); display:flex; align-items:center; gap:0.3rem; }
+        .user-btn:hover { border-color:var(--accent); color:var(--accent); } .user-btn.logged-in { border-color:var(--accent); color:var(--accent); background:rgba(184,134,92,0.08); }
+        .lang-toggle { background:transparent; border:1px solid var(--border); color:var(--text-secondary); padding:0.45rem 0.9rem; border-radius:25px; cursor:pointer; font-size:0.8rem; font-weight:600; transition:all var(--transition); white-space:nowrap; font-family:var(--font-ar); }
+        .lang-toggle:hover { border-color:var(--accent); color:var(--accent); }
+        .cart-btn { position:relative; background:transparent; border:none; color:var(--text-primary); font-size:1.4rem; cursor:pointer; padding:0.4rem; transition:color var(--transition); }
+        .cart-btn:hover { color:var(--accent); } .cart-count { position:absolute; top:-4px; right:-6px; background:var(--rose); color:#fff; font-size:0.7rem; font-weight:700; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+        .mobile-menu-btn { display:none; background:transparent; border:none; color:var(--text-primary); font-size:1.6rem; cursor:pointer; }
+        .main-content { max-width:1300px; margin:0 auto; padding:2rem; min-height:70vh; }
+        .page { display:none; animation:fadeSlideIn 0.5s ease; } .page.active { display:block; }
+        @keyframes fadeSlideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .hero { text-align:center; padding:4rem 2rem 2rem; position:relative; }
+        .hero h1 { font-size:3rem; font-weight:700; color:var(--text-primary); margin-bottom:0.8rem; letter-spacing:2px; }
+        .hero h1 .accent { color:var(--rose); }
+        .hero p { color:var(--text-secondary); font-size:1.15rem; max-width:600px; margin:0 auto 1rem; line-height:1.8; }
+        .hero .slogan { font-size:1.1rem; color:var(--accent); font-style:italic; margin-bottom:1.2rem; font-weight:500; letter-spacing:0.5px; }
+        .birthday-banner { background:linear-gradient(135deg, #fce8ec, #fcf0e8, #f5e6d3); border:1px solid var(--rose); border-radius:var(--radius-md); padding:1rem 1.5rem; margin:0 auto 1.5rem; max-width:600px; color:var(--text-primary); font-weight:600; font-size:0.95rem; text-align:center; box-shadow:var(--shadow-sm); }
+        .birthday-banner .icon { font-size:1.5rem; }
+        .hero .btn-hero { display:inline-block; background:var(--accent); color:#fff; padding:0.9rem 2.5rem; border-radius:30px; text-decoration:none; font-weight:700; font-size:1rem; letter-spacing:1px; cursor:pointer; transition:all var(--transition); border:none; margin-bottom:1.5rem; }
+        .hero .btn-hero:hover { background:var(--accent-dark); transform:translateY(-2px); box-shadow:0 8px 25px rgba(184,134,92,0.25); }
+        .section-title { text-align:center; font-size:2rem; font-weight:600; color:var(--text-primary); margin:3rem 0 2rem; letter-spacing:1px; position:relative; }
+        .section-title::after { content:''; display:block; width:60px; height:2px; background:var(--rose); margin:0.8rem auto 0; border-radius:1px; }
+        .category-section { margin-bottom:2.5rem; } .category-section .section-title { font-size:1.5rem; margin:1.5rem 0 1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; }
+        .category-section .section-title:hover { color:var(--accent); } .category-section .section-title .arrow { font-size:1rem; transition:transform var(--transition); }
+        .category-section .section-title:hover .arrow { transform:translateX(-4px); } body.ltr .category-section .section-title:hover .arrow { transform:translateX(4px); }
+        .view-all-link { text-align:center; margin-top:0.5rem; margin-bottom:1.5rem; }
+        .view-all-link a { color:var(--accent); text-decoration:none; font-weight:600; font-size:0.9rem; cursor:pointer; transition:color var(--transition); border-bottom:1px dashed var(--accent); padding-bottom:2px; }
+        .view-all-link a:hover { color:var(--accent-dark); border-color:var(--accent-dark); }
+        .product-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:1.5rem; margin-bottom:1.5rem; }
+        .product-card { background:var(--bg-card); border-radius:var(--radius-lg); overflow:hidden; cursor:pointer; transition:all var(--transition); border:1px solid var(--border-light); position:relative; box-shadow:var(--shadow-sm); }
+        .product-card:hover { background:var(--bg-card-hover); border-color:var(--border); transform:translateY(-4px); box-shadow:var(--shadow-md); }
+        .product-card-img { width:100%; aspect-ratio:3/4; background:var(--bg-secondary); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+        .product-card-img .placeholder-img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease; }
+        .product-card:hover .placeholder-img { transform:scale(1.05); }
+        .product-card-img .img-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 40%); opacity:0; transition:opacity var(--transition); }
+        .product-card:hover .img-overlay { opacity:1; }
+        .product-card-body { padding:0.9rem 1rem; }
+        .product-card-body .product-name { font-weight:600; font-size:0.82rem; color:var(--text-primary); margin-bottom:0.15rem; letter-spacing:0.3px; }
+        .product-card-body .product-cat { font-size:0.65rem; color:var(--text-muted); margin-bottom:0.35rem; }
+        .price-wrapper { display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; }
+        .original-price { font-size:0.68rem; color:var(--text-muted); text-decoration:line-through; font-weight:400; white-space:nowrap; }
+        .sale-price { font-weight:700; color:var(--accent); font-size:0.8rem; white-space:nowrap; }
+        .discount-badge { font-size:0.6rem; background:var(--rose); color:#fff; padding:0.12rem 0.35rem; border-radius:8px; font-weight:700; white-space:nowrap; }
+        .badge-new { position:absolute; top:12px; left:12px; background:var(--accent); color:#fff; font-size:0.7rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:20px; z-index:2; letter-spacing:0.5px; }
+        .product-detail-container { display:flex; gap:2.5rem; flex-wrap:wrap; background:var(--bg-card); border-radius:var(--radius-lg); padding:2rem; margin-bottom:2rem; box-shadow:var(--shadow-sm); border:1px solid var(--border-light); }
+        .product-detail-img { flex:1 1 380px; min-width:300px; aspect-ratio:3/4; background:var(--bg-secondary); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+        .product-detail-img .placeholder-img { width:100%; height:100%; object-fit:cover; }
+        .detail-visitors { position:absolute; bottom:12px; right:12px; background:rgba(255,255,255,0.9); color:var(--text-primary); font-size:0.75rem; padding:0.35rem 0.8rem; border-radius:15px; z-index:3; display:flex; align-items:center; gap:0.35rem; backdrop-filter:blur(4px); box-shadow:var(--shadow-sm); border:1px solid var(--border-light); }
+        .detail-visitors .live-dot { width:8px; height:8px; background:#e74c3c; border-radius:50%; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+        .product-detail-info { flex:1 1 350px; display:flex; flex-direction:column; gap:0.9rem; }
+        .product-detail-info h2 { font-size:1.8rem; font-weight:700; color:var(--text-primary); }
+        .product-detail-info .detail-price-wrapper { display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; }
+        .product-detail-info .detail-original { font-size:0.85rem; color:var(--text-muted); text-decoration:line-through; font-weight:400; }
+        .product-detail-info .detail-sale { font-size:1.1rem; font-weight:700; color:var(--accent); }
+        .product-detail-info .detail-discount { font-size:0.7rem; background:var(--rose); color:#fff; padding:0.2rem 0.6rem; border-radius:12px; font-weight:700; }
+        .product-detail-info .detail-desc { color:var(--text-secondary); line-height:1.8; font-size:0.95rem; }
+        .size-selector,.color-selector { display:flex; gap:0.5rem; flex-wrap:wrap; }
+        .size-btn,.color-btn { padding:0.5rem 1rem; border:1px solid var(--border); background:transparent; color:var(--text-secondary); border-radius:25px; cursor:pointer; transition:all var(--transition); font-size:0.85rem; font-weight:500; }
+        .size-btn:hover,.size-btn.selected { border-color:var(--accent); color:var(--accent); background:rgba(184,134,92,0.08); }
+        .color-btn { width:32px; height:32px; border-radius:50%; padding:0; border:3px solid transparent; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+        .color-btn.selected { border-color:var(--accent); box-shadow:0 0 12px rgba(184,134,92,0.3); }
+        .btn-add-cart { background:var(--accent); color:#fff; padding:0.85rem 2rem; border-radius:30px; border:none; cursor:pointer; font-weight:700; font-size:1rem; letter-spacing:0.5px; transition:all var(--transition); margin-top:0.5rem; }
+        .btn-add-cart:hover { background:var(--accent-dark); box-shadow:0 6px 20px rgba(184,134,92,0.25); }
+        .btn-back { display:inline-block; color:var(--text-muted); cursor:pointer; margin-bottom:1.5rem; font-size:0.9rem; transition:color var(--transition); background:none; border:none; padding:0; text-decoration:underline; }
+        .btn-back:hover { color:var(--accent); }
+        .reviews-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.2rem; }
+        .review-card { background:var(--bg-card); border-radius:var(--radius-md); padding:1.3rem; border:1px solid var(--border-light); transition:all var(--transition); box-shadow:var(--shadow-sm); }
+        .review-card:hover { border-color:var(--border); box-shadow:var(--shadow-md); }
+        .review-stars { color:#e67e22; font-size:0.9rem; margin-bottom:0.4rem; letter-spacing:1px; }
+        .review-text { color:var(--text-secondary); font-size:0.85rem; line-height:1.8; font-style:italic; }
+        .review-author { color:var(--accent); font-weight:600; margin-top:0.6rem; font-size:0.8rem; }
+        .review-date { color:var(--text-muted); font-size:0.7rem; margin-top:0.2rem; }
+        .verified-badge { display:inline-block; font-size:0.65rem; color:#27ae60; margin-right:0.3rem; }
+        .cart-overlay { position:fixed; inset:0; background:rgba(45,36,34,0.4); backdrop-filter:blur(4px); z-index:2000; display:none; opacity:0; transition:opacity 0.3s ease; }
+        .cart-overlay.open { display:block; opacity:1; }
+        .cart-drawer { position:fixed; top:0; right:0; width:420px; max-width:90vw; height:100vh; background:var(--bg-modal); z-index:2001; box-shadow:var(--shadow-lg); transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column; border-left:1px solid var(--border); }
+        body.ltr .cart-drawer { right:auto; left:0; transform:translateX(-100%); border-left:none; border-right:1px solid var(--border); } body.ltr .cart-drawer.open { transform:translateX(0); } .cart-drawer.open { transform:translateX(0); }
+        .cart-header { padding:1.5rem; border-bottom:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center; }
+        .cart-header h3 { font-size:1.3rem; font-weight:600; } .cart-close { background:transparent; border:none; color:var(--text-secondary); font-size:1.5rem; cursor:pointer; transition:color var(--transition); } .cart-close:hover { color:var(--danger); }
+        .cart-items { flex:1; overflow-y:auto; padding:1rem; }
+        .cart-item { display:flex; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--border-light); align-items:center; }
+        .cart-item-img { width:70px; height:90px; background:var(--bg-secondary); border-radius:var(--radius-sm); flex-shrink:0; overflow:hidden; }
+        .cart-item-img .placeholder-img { width:100%; height:100%; object-fit:cover; }
+        .cart-item-info { flex:1; } .cart-item-name { font-weight:600; font-size:0.9rem; color:var(--text-primary); } .cart-item-meta { font-size:0.75rem; color:var(--text-muted); } .cart-item-price { font-weight:700; color:var(--accent); font-size:0.85rem; }
+        .cart-item-remove { background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:1.1rem; transition:color var(--transition); padding:0.3rem; } .cart-item-remove:hover { color:var(--danger); }
+        .cart-footer { padding:1.5rem; border-top:1px solid var(--border-light); } .cart-total { font-size:1.2rem; font-weight:700; margin-bottom:1rem; display:flex; justify-content:space-between; }
+        .btn-checkout { width:100%; background:var(--accent); color:#fff; padding:0.9rem; border-radius:30px; border:none; cursor:pointer; font-weight:700; font-size:1rem; letter-spacing:0.5px; transition:all var(--transition); } .btn-checkout:hover { background:var(--accent-dark); }
+        .cart-empty { text-align:center; color:var(--text-muted); padding:3rem 1rem; font-size:1rem; }
+        .checkout-modal { position:fixed; inset:0; z-index:3000; display:none; align-items:center; justify-content:center; background:rgba(45,36,34,0.5); backdrop-filter:blur(4px); padding:1rem; }
+        .checkout-modal.open { display:flex; }
+        .checkout-form { background:var(--bg-modal); border-radius:var(--radius-lg); padding:2rem; width:100%; max-width:580px; max-height:85vh; overflow-y:auto; box-shadow:var(--shadow-lg); border:1px solid var(--border); }
+        .checkout-form h3 { font-size:1.5rem; margin-bottom:1.5rem; text-align:center; color:var(--accent); }
+        .form-group { margin-bottom:1rem; } .form-group label { display:block; margin-bottom:0.4rem; font-weight:500; color:var(--text-secondary); font-size:0.85rem; }
+        .form-group input,.form-group textarea,.form-group select { width:100%; padding:0.75rem 1rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-secondary); color:var(--text-primary); font-size:0.9rem; transition:border-color var(--transition); resize:vertical; font-family:var(--font-ar); }
+        .form-group input:focus,.form-group textarea:focus,.form-group select:focus { outline:none; border-color:var(--accent); background:#fff; }
+        .form-group select { appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23b8865c' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:left 1rem center; padding-left:2.5ln; }
+        .payment-methods { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+        .payment-method-btn { flex:1; min-width:90px; padding:0.7rem 0.5rem; border:1px solid var(--border); background:transparent; color:var(--text-secondary); border-radius:25px; cursor:pointer; font-size:0.8rem; font-weight:500; transition:all var(--transition); text-align:center; font-family:var(--font-ar); }
+        .payment-method-btn:hover,.payment-method-btn.selected { border-color:var(--accent); color:var(--accent); background:rgba(184,134,92,0.08); }
+        .wallet-fields,.visa-fields { display:none; background:var(--bg-secondary); border-radius:var(--radius-sm); padding:1rem; margin-bottom:1rem; border:1px solid var(--border); }
+        .wallet-fields.active,.visa-fields.active { display:block; }
+        .wallet-sim { background:var(--bg-card); border-radius:var(--radius-md); padding:1.2rem; text-align:center; border:1px solid var(--border); box-shadow:var(--shadow-sm); }
+        .wallet-sim .wallet-logo { font-size:2rem; margin-bottom:0.5rem; }
+        .wallet-sim .wallet-amount { font-size:1.5rem; font-weight:700; color:var(--accent); }
+        .wallet-sim .wallet-to { font-size:0.8rem; color:var(--text-muted); margin:0.5rem 0; }
+        .wallet-sim .wallet-ref { font-size:0.7rem; color:var(--text-muted); background:var(--bg-secondary); padding:0.5rem; border-radius:8px; margin-top:0.5rem; }
+        .btn-confirm-wallet { width:100%; background:#e74c3c; color:#fff; padding:0.9rem; border-radius:30px; border:none; cursor:pointer; font-weight:700; font-size:1rem; margin-top:1rem; transition:all var(--transition); }
+        .btn-confirm-wallet:hover { background:#c0392b; }
+        .visa-row { display:flex; gap:0.5rem; } .visa-row .form-group { flex:1; }
+        .save-info-row { display:flex; align-items:center; gap:0.5rem; margin:1rem 0; color:var(--text-secondary); font-size:0.85rem; cursor:pointer; }
+        .save-info-row input[type="checkbox"] { width:18px; height:18px; accent-color:var(--accent); cursor:pointer; }
+        .login-link-row { text-align:center; margin:0.5rem 0; font-size:0.85rem; color:var(--text-muted); }
+        .login-link-row a { color:var(--accent); cursor:pointer; text-decoration:underline; } .login-link-row a:hover { color:var(--accent-dark); }
+        .delivery-note { background:rgba(184,134,92,0.08); border:1px solid rgba(184,134,92,0.2); border-radius:var(--radius-sm); padding:0.8rem 1rem; margin:1rem 0; text-align:center; color:var(--accent); font-weight:500; font-size:0.85rem; }
+        .shipping-note { background:rgba(184,134,92,0.05); border:1px solid rgba(184,134,92,0.15); border-radius:var(--radius-sm); padding:0.7rem 1rem; margin:0.5rem 0; text-align:center; color:var(--text-secondary); font-size:0.8rem; }
+        .btn-submit-order { width:100%; background:var(--accent); color:#fff; padding:0.9rem; border-radius:30px; border:none; cursor:pointer; font-weight:700; font-size:1rem; letter-spacing:0.5px; transition:all var(--transition); margin-top:0.5rem; }
+        .btn-submit-order:hover { background:var(--accent-dark); }
+        .btn-cancel-checkout { width:100%; background:transparent; color:var(--text-muted); padding:0.7rem; border:none; cursor:pointer; margin-top:0.5rem; font-size:0.85rem; transition:color var(--transition); } .btn-cancel-checkout:hover { color:var(--danger); }
+        .account-modal { position:fixed; inset:0; z-index:3500; display:none; align-items:center; justify-content:center; background:rgba(45,36,34,0.5); backdrop-filter:blur(4px); padding:1rem; }
+        .account-modal.open { display:flex; }
+        .account-form { background:var(--bg-modal); border-radius:var(--radius-lg); padding:2rem; width:100%; max-width:480px; max-height:85vh; overflow-y:auto; box-shadow:var(--shadow-lg); border:1px solid var(--border); }
+        .account-form h3 { font-size:1.4rem; margin-bottom:1.5rem; text-align:center; color:var(--accent); }
+        .account-tabs { display:flex; gap:0; margin-bottom:1.5rem; border-radius:25px; overflow:hidden; border:1px solid var(--border); }
+        .account-tab { flex:1; padding:0.7rem; text-align:center; cursor:pointer; font-weight:600; font-size:0.85rem; background:transparent; color:var(--text-secondary); border:none; transition:all var(--transition); }
+        .account-tab.active { background:var(--accent); color:#fff; } .account-tab:hover:not(.active) { background:rgba(184,134,92,0.1); color:var(--accent); }
+        .btn-account-action { width:100%; background:var(--accent); color:#fff; padding:0.85rem; border-radius:30px; border:none; cursor:pointer; font-weight:700; font-size:0.95rem; letter-spacing:0.5px; transition:all var(--transition); margin-top:0.5rem; } .btn-account-action:hover { background:var(--accent-dark); }
+        .btn-logout { width:100%; background:transparent; border:1px solid var(--danger); color:var(--danger); padding:0.7rem; border-radius:30px; cursor:pointer; font-weight:600; margin-top:0.5rem; transition:all var(--transition); } .btn-logout:hover { background:rgba(192,57,43,0.1); }
+        .account-info-row { background:var(--bg-secondary); border-radius:var(--radius-sm); padding:0.8rem 1rem; margin-bottom:0.5rem; font-size:0.85rem; color:var(--text-secondary); display:flex; justify-content:space-between; flex-wrap:wrap; border:1px solid var(--border-light); } .account-info-row strong { color:var(--text-primary); }
+        .messenger-btn { position:fixed; bottom:24px; right:24px; z-index:1500; width:56px; height:56px; border-radius:50%; background:#25d366; border:none; cursor:pointer; box-shadow:0 6px 20px rgba(37,211,102,0.35); display:flex; align-items:center; justify-content:center; transition:all var(--transition); text-decoration:none; }
+        .messenger-btn:hover { transform:scale(1.08); box-shadow:0 10px 28px rgba(37,211,102,0.45); } .messenger-btn svg { width:28px; height:28px; fill:#fff; } body.ltr .messenger-btn { right:auto; left:24px; }
+        .toast { position:fixed; top:90px; right:24px; z-index:4000; background:var(--success); color:#fff; padding:0.8rem 1.5rem; border-radius:30px; font-weight:600; font-size:0.9rem; box-shadow:var(--shadow-md); transform:translateX(120%); transition:transform 0.4s ease; pointer-events:none; }
+        .toast.show { transform:translateX(0); } body.ltr .toast { right:auto; left:24px; transform:translateX(-120%); } body.ltr .toast.show { transform:translateX(0); }
+        .related-section { margin-top:2.5rem; } .related-section .section-title { font-size:1.4rem; margin-bottom:1.5rem; }
+        .purchase-count { background:rgba(184,134,92,0.08); border:1px solid rgba(184,134,92,0.15); border-radius:var(--radius-sm); padding:0.5rem 0.8rem; display:inline-block; font-size:0.8rem; color:var(--accent); margin-top:0.3rem; }
+        @media (max-width:900px) { .nav-links { display:none; position:absolute; top:70px; right:0; left:0; background:rgba(255,250,247,0.98); backdrop-filter:blur(20px); flex-direction:column; padding:1rem; border-bottom:1px solid var(--border); gap:0; box-shadow:var(--shadow-md); } .nav-links.open { display:flex; } .nav-links a { padding:0.8rem 1rem; border-radius:8px; display:block; font-size:0.9rem; } .mobile-menu-btn { display:block; } .hero h1 { font-size:2rem; } .product-detail-container { flex-direction:column; padding:1.2rem; } .product-detail-img { min-width:auto; aspect-ratio:3/4; } .cart-drawer { width:100vw; max-width:100vw; } .reviews-grid { grid-template-columns:1fr; } .product-grid { grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:0.8rem; } .user-btn span.lbl { display:none; } .user-btn { padding:0.45rem 0.6rem; } }
+        @media (max-width:480px) { .header-inner { height:60px; } .logo { font-size:1.3rem; } .hero { padding:2rem 1rem; } .hero h1 { font-size:1.5rem; } .main-content { padding:1rem; } .product-grid { grid-template-columns:repeat(2, 1fr); gap:0.6rem; } .product-card-body { padding:0.6rem 0.8rem; } .product-card-body .product-name { font-size:0.75rem; } .sale-price { font-size:0.72rem; } .original-price { font-size:0.62rem; } .messenger-btn { width:44px; height:44px; bottom:16px; right:16px; } .messenger-btn svg { width:22px; height:22px; } .price-wrapper { gap:0.3rem; } }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-inner">
+            <a class="logo" onclick="navigateTo('home')">Velvet<span>Rose</span></a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a onclick="navigateTo('home')" data-page="home" class="active">الرئيسية</a></li>
+                <li><a onclick="navigateTo('homewear')" data-page="homewear">ملابس منزلية</a></li>
+                <li><a onclick="navigateTo('lingerie')" data-page="lingerie">ملابس داخلية</a></li>
+                <li><a onclick="navigateTo('sleepwear')" data-page="sleepwear">ملابس نوم</a></li>
+                <li><a onclick="navigateTo('shapewear')" data-page="shapewear">ملابس تشكيل</a></li>
+                <li><a onclick="navigateTo('newarrivals')" data-page="newarrivals">وصل حديثاً</a></li>
+            </ul>
+            <div class="header-actions">
+                <button class="user-btn" id="userBtn" onclick="openAccountModal()" title="حسابي">👤 <span class="lbl" id="userBtnLabel">حسابي</span></button>
+                <button class="lang-toggle" onclick="toggleLanguage()" id="langToggle">English</button>
+                <button class="cart-btn" onclick="toggleCart()" aria-label="Cart">🛒<span class="cart-count" id="cartCount">0</span></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content" id="mainContent">
+        <div class="page active" id="page-home"></div>
+        <div class="page" id="page-homewear"></div>
+        <div class="page" id="page-lingerie"></div>
+        <div class="page" id="page-sleepwear"></div>
+        <div class="page" id="page-shapewear"></div>
+        <div class="page" id="page-newarrivals"></div>
+        <div class="page" id="page-product-detail"></div>
+    </div>
+
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header"><h3>سلة التسوق</h3><button class="cart-close" onclick="toggleCart()">✕</button></div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer" id="cartFooter"></div>
+    </div>
+    <div class="checkout-modal" id="checkoutModal"><div class="checkout-form" id="checkoutFormContainer"></div></div>
+    <div class="account-modal" id="accountModal"><div class="account-form" id="accountFormContainer"></div></div>
+    
+    <!-- زر واتساب عائم مباشر -->
+    <a href="https://wa.me/201552953250?text=مرحباً،%20أريد%20الاستفسار%20عن%20منتجات%20متجر%20Velvet%20Rose" target="_blank" rel="noopener" class="messenger-btn" title="تواصل معنا عبر واتساب">
+        <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+    </a>
+    
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const STORE_WHATSAPP = '201552953250';
+        const STORE_NAME = 'Velvet Rose';
+        const PAYMENT_NUMBER = '01282709580';
+        const SHIPPING_CAIRO_GIZA = 60;
+        const SHIPPING_OTHER = 100;
+        const CAIRO_GIZA_GOVERNORATES = ['القاهرة', 'الجيزة'];
+        const egyptGovernorates = ['القاهرة','الجيزة','الإسكندرية','القليوبية','الشرقية','الدقهلية','البحيرة','الغربية','المنوفية','كفر الشيخ','الإسماعيلية','بورسعيد','السويس','دمياط','شمال سيناء','جنوب سيناء','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','الوادي الجديد','مطروح','البحر الأحمر'];
+
+        let currentLang='ar',currentPage='home',cart=JSON.parse(localStorage.getItem('velvetRoseCart')||'[]'),selectedProductId=null,selectedSize=null,selectedColor=null,currentUser=JSON.parse(localStorage.getItem('velvetRoseUser')||'null'),accounts=JSON.parse(localStorage.getItem('velvetRoseAccounts')||'{}'),accountTab='login',selectedPayment='cod';
+
+        function getMonthlyPurchaseCount(productId) {
+            const monthKey = new Date().getFullYear() + '-' + (new Date().getMonth());
+            const seed = productId * 7 + monthKey.length * 13;
+            const base = 50 + (seed % 351); 
+            return base;
+        }
+
+        const arTexts = {
+            nav_home:'الرئيسية',nav_homewear:'ملابس منزلية',nav_lingerie:'ملابس داخلية',nav_sleepwear:'ملابس نوم',nav_shapewear:'ملابس تشكيل',nav_new:'وصل حديثاً',
+            cart_title:'سلة التسوق',cart_empty:'السلة فارغة أضيفي منتجاتك المفضلة',total:'الإجمالي',checkout_btn:'إتمام الطلب',
+            add_to_cart:'أضف إلى السلة',select_size:'اختر المقاس',select_color:'اختر اللون',
+            reviews_title:'آراء العملاء',home_reviews_title:'ماذا تقول عميلاتنا الجميلات',
+            delivery_note:'🚚 التوصيل خلال ٣ أيام عمل من تأكيد الطلب',checkout_title:'إتمام الطلب',
+            full_name:'الاسم بالكامل',phone:'رقم الهاتف',phone2:'رقم هاتف آخر',email:'البريد الإلكتروني',address:'العنوان بالتفصيل',governorate:'المحافظة',
+            submit_order:'تقديم الطلب',cancel:'إلغاء',order_success:'✅ تم تقديم طلبك بنجاح سنتواصل معك قريباً',
+            hero_title:'أناقة تلامس روحك',hero_sub:'اكتشفي أحدث تشكيلاتنا من أفخر أنواع اللانجري والملابس المنزلية وملابس النوم',
+            hero_btn:'تسوقي الآن',slogan:'انتي مش بتشتري مجرد منتج تلبسيه، انتي بتشتري استايل يليق بيكي',
+            birthday_banner:'🎉 استمتعي بخصومات أغسطس بمناسبة عيد ميلادنا الثامن 🎉\n٨ سنوات من النجاح والجودة والثقة',
+            featured:'أقسامنا المميزة',homewear_title:'ملابس منزلية',lingerie_title:'ملابس داخلية',sleepwear_title:'ملابس نوم',shapewear_title:'ملابس تشكيل الجسم',
+            new_title:'وصل حديثاً',back:'← العودة',size:'المقاس',color:'اللون',egp:'ج.م',
+            view_all:'عرض كل المنتجات',verified:'عملية شراء موثقة',
+            save_info:'حفظ بياناتي لحسابي في الموقع للطلبات المستقبلية',
+            have_account:'عندك حساب',login_here:'تسجيل الدخول',no_account:'ليس لديك حساب',signup_here:'إنشاء حساب جديد',
+            account_title:'حسابي',login_title:'تسجيل الدخول',signup_title:'إنشاء حساب',login_btn:'دخول',signup_btn:'إنشاء حساب',
+            password:'كلمة المرور',password_confirm:'تأكيد كلمة المرور',logout_btn:'تسجيل الخروج',
+            welcome_back:'مرحباً بعودتك',account_saved:'✅ تم حفظ بياناتك بنجاح',logged_in_as:'مسجلة الدخول كـ',
+            password_mismatch:'كلمة المرور غير متطابقة',fill_all:'الرجاء ملء جميع الحقول المطلوبة',
+            login_failed:'رقم الهاتف أو كلمة المرور غير صحيحة',phone_exists:'هذا الرقم مسجل بالفعل الرجاء تسجيل الدخول',
+            related_products:'منتجات مشابهة قد تعجبك',payment_method:'طريقة الدفع',cod:'الدفع عند الاستلام',wallet:'فودافون كاش',visa:'بطاقة فيزا',
+            wallet_phone:'رقم هاتف فودافون كاش',wallet_pin:'الرمز السري PIN',wallet_confirm:'تأكيد الدفع',
+            wallet_sim_to:'التحويل إلى رقم الخدمة',wallet_sim_ref:'رقم مرجعي للعملية',
+            visa_card_number:'رقم البطاقة',visa_holder:'اسم حامل البطاقة',visa_expiry:'تاريخ الانتهاء',visa_cvv:'رمز CVV',
+            shipping:'مصاريف الشحن',free_shipping_note:'التوصيل خلال ٣ أيام عمل',
+            purchased_last_month:'تم شراؤه +{count} مرة الشهر الماضي'
+        };
+
+        const enCaptions = {
+            nav_home:'Home',nav_homewear:'Home Wear',nav_lingerie:'Lingerie',nav_sleepwear:'Sleepwear',nav_shapewear:'Shapewear',nav_new:'New Arrivals',
+            cart_title:'Shopping Cart',cart_empty:'Your cart is empty',total:'Total',checkout_btn:'Checkout',
+            add_to_cart:'Add to Cart',select_size:'Select Size',select_color:'Select Color',
+            reviews_title:'Customer Reviews',home_reviews_title:'What Our Lovely Customers Say',
+            delivery_note:'🚚 Delivery within 3 working days',checkout_title:'Checkout',
+            full_name:'Full Name',phone:'Phone Number',phone2:'Secondary Phone',email:'Email',address:'Detailed Address',governorate:'Governorate',
+            submit_order:'Place Order',cancel:'Cancel',order_success:'✅ Order placed successfully',
+            hero_title:'Elegance That Touches Your Soul',hero_sub:'Discover our latest collections',
+            hero_btn:'Shop Now',slogan:'You are not just buying something to wear, you are buying a style that suits you',
+            birthday_banner:'🎉 Enjoy August Discounts for Our 8th Anniversary 🎉\n8 Years of Success, Quality & Trust',
+            featured:'Our Featured Categories',homewear_title:'Home Wear',lingerie_title:'Lingerie',sleepwear_title:'Sleepwear',shapewear_title:'Shapewear',
+            new_title:'New Arrivals',back:'← Back',size:'Size',color:'Color',egp:'EGP',
+            view_all:'View All Products',verified:'Verified Purchase',
+            save_info:'Save my information',have_account:'Have an account',login_here:'Login',no_account:'No account',signup_here:'Sign up',
+            account_title:'My Account',login_title:'Login',signup_title:'Sign Up',login_btn:'Login',signup_btn:'Sign Up',
+            password:'Password',password_confirm:'Confirm Password',logout_btn:'Logout',
+            welcome_back:'Welcome back',account_saved:'✅ Saved',logged_in_as:'Logged in as',
+            password_mismatch:'Passwords do not match',fill_all:'Please fill all fields',
+            login_failed:'Invalid credentials',phone_exists:'Phone already registered',
+            related_products:'Related Products',payment_method:'Payment Method',cod:'Cash on Delivery',wallet:'Vodafone Cash',visa:'Visa Card',
+            wallet_phone:'Vodafone Cash Number',wallet_pin:'PIN Code',wallet_confirm:'Confirm Payment',
+            wallet_sim_to:'Transfer to Service Number',wallet_sim_ref:'Transaction Reference',
+            visa_card_number:'Card Number',visa_holder:'Cardholder Name',visa_expiry:'Expiry Date',visa_cvv:'CVV Code',
+            shipping:'Shipping',free_shipping_note:'Delivery within 3 working days',
+            purchased_last_month:'+{count} bought in past month'
+        };
+
+        function t(key) {
+            if (currentLang === 'en' && enCaptions[key]) return enCaptions[key];
+            return arTexts[key] || key;
+        }
+
+        function p(id,nameAr,cat,price,discountPct,descAr,sizes,colors,imgUrl,isNew){return{id,nameAr,category:cat,price,discountPct,descAr,sizes,colors,imgUrl,imgSeed:'p'+id,isNew:!!isNew};}
+
+        const products = [
+            p(1,'طقم منزلي فاخر ساتان','homewear',850,20,'طقم منزلي أنيق من الساتان الفاخر مثالي للراحة والأناقة في المنزل',['S','M','L','XL'],['#2d2422','#d9a5b3','#8b4513','#fcf8f5'],'https://images.unsplash.com/photo-1515347619362-e64e9a0595d2?w=400&h=500&fit=crop',false),
+            p(2,'روب منزلي طويل قطيفة','homewear',720,25,'روب منزلي طويل فاخر من القطيفة الناعمة يمنحك الدفء والراحة',['M','L','XL'],['#800020','#2c2c2c','#b8865c'],'https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=400&h=500&fit=crop',false),
+            p(3,'طقم بيجاما حرير دانتيل','homewear',980,15,'طقم بيجاما من الحرير الطبيعي مع تفاصيل دانتيل راقية',['S','M','L'],['#fcf8f5','#2d1b2e','#b8865c'],'https://images.unsplash.com/photo-1615286699507-6bb3041933ba?w=400&h=500&fit=crop',true),
+            p(4,'طقم منزلي قطني تطريز','homewear',620,30,'طقم منزلي قطني مريح مع تطريز يدوي أنيق',['S','M','L','XL','XXL'],['#ffffff','#f5e6d3','#b8865c'],'https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?w=400&h=500&fit=crop',false),
+            p(5,'طقم منزلي شتوي صوف ناعم','homewear',1100,18,'طقم منزلي شتوي فاخر من الصوف الناعم للتدفئة القصوى',['M','L','XL'],['#4a2c2a','#1a1a2e','#d9a5b3'],'https://images.unsplash.com/photo-1434389677669-e08b4cda3ab8?w=400&h=500&fit=crop',false),
+            p(6,'قميص نوم طويل دانتيل فرنسي','homewear',890,22,'قميص نوم طويل أنيق مع دانتيل فرنسي فاخر',['S','M','L'],['#2d2422','#fcf8f5','#800020'],'https://images.unsplash.com/photo-1599015949533-3d0cf3b08e74?w=400&h=500&fit=crop',true),
+            p(7,'طقم منزلي صيفي كتان','homewear',580,17,'طقم منزلي صيفي خفيف من الكتان الطبيعي المنعش',['S','M','L','XL'],['#fcf8f5','#d4c5b9','#a8c8d8'],'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=500&fit=crop',false),
+            p(8,'روب قصير ساتان وردي','homewear',480,28,'روب قصير أنيق من الساتان الوردي الناعم مع حزام خصر',['S','M','L'],['#f5d6dc','#fcf8f5','#d9a5b3'],'https://images.unsplash.com/photo-1623609163859-ca93c7324cb6?w=400&h=500&fit=crop',false),
+            p(9,'طقم منزلي فيسكوز بامبو','homewear',750,23,'طقم منزلي صديق للبشرة من فيسكوز البامبو الطبيعي فائق النعومة',['S','M','L','XL','XXL'],['#f4ede6','#c9b99a','#8c7a6b'],'https://images.unsplash.com/photo-1502716115624-b56ceb056ce5?w=400&h=500&fit=crop',false),
+            p(10,'طقم منزلي قطن عضوي','homewear',680,16,'طقم منزلي من القطن العضوي المعتمد لطيف على البشرة',['S','M','L','XL'],['#ffffff','#e8d5c4','#b8c9b8'],'https://images.unsplash.com/photo-1603344797033-f0f4f587ab60?w=400&h=500&fit=crop',false),
+            p(11,'طقم منزلي مخمل أزرق ليلي','homewear',950,21,'طقم منزلي فاخر من المخمل بلون أزرق ليلي ساحر',['M','L','XL'],['#1a2a3a','#2c3e50','#0d1b2a'],'https://images.unsplash.com/photo-1549062572-544a64fb0c56?w=400&h=500&fit=crop',false),
+            p(12,'طقم منزلي تول مطرز','homewear',820,19,'طقم منزلي راق مع تفاصيل تول مطرزة يدوياً',['S','M','L'],['#fcf8f5','#2d2422','#d9a5b3'],'https://images.unsplash.com/photo-1585916420730-d7f95e942d43?w=400&h=500&fit=crop',true),
+            p(13,'طقم ترنج منزلي فرنسي تيري','homewear',650,27,'طقم ترنج منزلي مريح من القطن الفرنسي تيري',['S','M','L','XL','XXL'],['#d4c5b9','#8c7a6b','#3a3a3a'],'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=400&h=500&fit=crop',false),
+            p(14,'روب حمام قطن تركي','homewear',880,24,'روب حمام فاخر من القطن التركي طويل التيلة',['M','L','XL','XXL'],['#ffffff','#fcf8f5','#d4c5b9'],'https://images.unsplash.com/photo-1572804013309-84a8607a9d02?w=400&h=500&fit=crop',false),
+            p(15,'طقم منزلي كشمير مخلوط','homewear',1350,15,'طقم منزلي فاخر من مزيج الكشمير الناعم',['S','M','L'],['#c9b99a','#a0897c','#4a2c2a'],'https://images.unsplash.com/photo-1550808011-30d892ef66ec?w=400&h=500&fit=crop',false),
+            p(16,'طقم داخلي أنيق مايكروفايبر','lingerie',450,26,'طقم داخلي ناعم ومريح من المايكروفايبر الفاخر',['S','M','L','XL'],['#2d2422','#d9a5b3','#ffffff','#800020'],'https://images.unsplash.com/photo-1608744882201-52a7b45e3e60?w=400&h=500&fit=crop',false),
+            p(17,'طقم داخلي قطني تطريز وردي','lingerie',380,29,'طقم داخلي قطني مع تطريز وردي راقي',['S','M','L','XL','XXL'],['#fcf8f5','#d9a5b3','#2d1b2e'],'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=400&h=500&fit=crop',false),
+            p(18,'طقم داخلي دانتيل فاخر','lingerie',680,18,'طقم داخلي فاخر من الدانتيل الفرنسي مع لمسات ساتان',['S','M','L'],['#2d2422','#800020','#b8865c'],'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=500&fit=crop',true),
+            p(19,'طقم داخلي رياضي قطن مطاط','lingerie',320,22,'طقم داخلي رياضي مريح من القطن المطاط',['S','M','L','XL'],['#2c2c2c','#ffffff','#b8865c'],'https://images.unsplash.com/photo-1571736772453-0e1f704342b6?w=400&h=500&fit=crop',false),
+            p(20,'طقم داخلي ساتان خصر عالي','lingerie',520,17,'طقم داخلي من الساتان بتصميم خصر عالي أنيق',['M','L','XL'],['#1a1a2e','#d9a5b3','#f5e6d3'],'https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?w=400&h=500&fit=crop',false),
+            p(21,'طقم داخلي تول وردي','lingerie',750,30,'طقم داخلي راق من التول باللون الوردي مع دانتيل',['S','M','L'],['#f5e6d3','#d9a5b3','#2d2422'],'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=400&h=500&fit=crop',true),
+            p(22,'طقم داخلي دانتيل شانتيه','lingerie',890,16,'طقم داخلي فاخر من دانتيل شانتيه الفرنسي',['S','M','L'],['#fcf8f5','#2d2422','#800020'],'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&h=500&fit=crop',false),
+            p(23,'طقم داخلي قطن مصري','lingerie',420,25,'طقم داخلي من القطن المصري طويل التيلة',['S','M','L','XL','XXL'],['#ffffff','#e8d5c4','#2c2c2c'],'https://images.unsplash.com/photo-1532453288672-3a27e9be03ef?w=400&h=500&fit=crop',false),
+            p(24,'طقم داخلي سيملس','lingerie',360,21,'طقم داخلي بدون خياطات مثالي تحت الملابس الضيقة',['S','M','L','XL'],['#d4c5b9','#2d2422','#d9a5b3'],'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=500&fit=crop',false),
+            p(25,'طقم داخلي تول أسود فاخر','lingerie',820,19,'طقم داخلي أسود من التول الفاخر مع تطريزات',['S','M','L','XL'],['#2d2422','#2c2c2c','#800020'],'https://images.unsplash.com/photo-1612981737834-f8a2e1b3d4f3?w=400&h=500&fit=crop',false),
+            p(26,'طقم داخلي فيسكوز الخيزران','lingerie',400,28,'طقم داخلي مضاد للبكتيريا من فيسكوز الخيزران',['S','M','L','XL','XXL'],['#fcf8f5','#e8d5c4','#c9b99a'],'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=400&h=500&fit=crop',false),
+            p(27,'طقم داخلي موسلين قطني','lingerie',340,23,'طقم داخلي من الموسلين القطني الخفيف',['S','M','L','XL'],['#ffffff','#f5e6d3','#d4c5b9'],'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&h=500&fit=crop',false),
+            p(28,'طقم داخلي جاكار فاخر','lingerie',700,15,'طقم داخلي من قماش الجاكار الفاخر بنقوش بارزة',['M','L','XL'],['#2d1b2e','#1a1a2e','#4a2c2a'],'https://images.unsplash.com/photo-1583316174775-bd42f8829837?w=400&h=500&fit=crop',true),
+            p(29,'طقم داخلي مودال ناعم','lingerie',460,27,'طقم داخلي من نسيج المودال فائق النعومة',['S','M','L','XL','XXL'],['#d9a5b3','#2d2422','#b8865c'],'https://images.unsplash.com/photo-1526315250482-628d0979e2a4?w=400&h=500&fit=crop',false),
+            p(30,'طقم داخلي براديري أنجليزية','lingerie',620,20,'طقم داخلي قطني مع تطريز براديري إنجليزي',['S','M','L'],['#ffffff','#fcf8f5','#e8d5c4'],'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=400&h=500&fit=crop',false),
+            p(31,'قميص نوم حرير طويل','sleepwear',950,18,'قميص نوم طويل من الحرير الطبيعي ينسدل برقة',['S','M','L','XL'],['#d9a5b3','#1a1a2e','#fcf8f5','#800020'],'https://images.unsplash.com/photo-1618331835717-801e976710b2?w=400&h=500&fit=crop',false),
+            p(32,'طقم بيجاما قطن مقلم','sleepwear',580,26,'طقم بيجاما قطني كلاسيكي مقلم بألوان هادئة',['S','M','L','XL','XXL'],['#d4c5b9','#a8c8d8','#e8d5c4'],'https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?w=400&h=500&fit=crop',false),
+            p(33,'قميص نوم قصير دانتيل','sleepwear',480,22,'قميص نوم قصير وجذاب مع تفاصيل دانتيل',['S','M','L'],['#2d2422','#d9a5b3','#f5e6d3'],'https://images.unsplash.com/photo-1567789884554-0b844b3b1d4f?w=400&h=500&fit=crop',true),
+            p(34,'طقم بيجاما ساتان أزرق ملكي','sleepwear',780,17,'طقم بيجاما من الساتان باللون الأزرق الملكي',['S','M','L','XL'],['#1a2a4a','#2c3e6e','#0d1b3a'],'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&h=500&fit=crop',false),
+            p(35,'روب نوم طويل شيفون','sleepwear',650,29,'روب نوم طويل وشفاف من الشيفون الناعم',['S','M','L'],['#f5e6d3','#2d2422','#d9a5b3'],'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=400&h=500&fit=crop',false),
+            p(36,'طقم بيجاما فيسكوز مريح','sleepwear',520,24,'طقم بيجاما من فيسكوز عالي الجودة ناعم ومنعش',['S','M','L','XL','XXL'],['#e8d5c4','#b8c9b8','#c9b99a'],'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=400&h=500&fit=crop',false),
+            p(37,'قميص نوم تول ودانتيل','sleepwear',880,16,'قميص نوم ساحر من التول مع دانتيل فرنسي',['S','M','L'],['#fcf8f5','#2d2422','#800020'],'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop',true),
+            p(38,'طقم بيجاما صوف ميرينو','sleepwear',1100,21,'طقم بيجاما شتوي فاخر من صوف الميرينو',['M','L','XL'],['#4a2c2a','#2c3e50','#c9b99a'],'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&h=500&fit=crop',false),
+            p(39,'طقم شورت وتوب نوم','sleepwear',420,30,'طقم نوم صيفي منعش من القطن الناعم',['S','M','L','XL'],['#f5e6d3','#d4c5b9','#a8c8d8'],'https://images.unsplash.com/photo-1434389677669-e08b4cda3ab8?w=400&h=500&fit=crop',false),
+            p(40,'قميص نوم ساتان ظهر مكشوف','sleepwear',720,19,'قميص نوم من الساتان بتصميم ظهر مكشوف جذاب',['S','M','L'],['#2d2422','#d9a5b3','#800020'],'https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?w=400&h=500&fit=crop',false),
+            p(41,'طقم بيجاما حرير مخلوط','sleepwear',850,25,'طقم بيجاما من مزيج الحرير والقطن',['S','M','L','XL'],['#fcf8f5','#2d1b2e','#b8865c'],'https://images.unsplash.com/photo-1583316174775-bd42f8829837?w=400&h=500&fit=crop',false),
+            p(42,'روب نوم مخمل وردي','sleepwear',680,28,'روب نوم قصير من المخمل الوردي الناعم',['S','M','L'],['#f5d6dc','#d4a0a0','#d9a5b3'],'https://images.unsplash.com/photo-1623609163859-ca93c7324cb6?w=400&h=500&fit=crop',false),
+            p(43,'طقم نوم قطن بامبو','sleepwear',560,23,'طقم نوم من مزيج القطن والبامبو فائق التهوية',['S','M','L','XL','XXL'],['#f4ede6','#d4c5b9','#b8c9b8'],'https://images.unsplash.com/photo-1532453288672-3a27e9be03ef?w=400&h=500&fit=crop',false),
+            p(44,'قميص نوم طويل أكمام دانتيل','sleepwear',920,17,'قميص نوم طويل بأكمام دانتيل شفافة',['S','M','L','XL'],['#1a1a2e','#fcf8f5','#4a2c2a'],'https://images.unsplash.com/photo-1603344797033-f0f4f587ab60?w=400&h=500&fit=crop',true),
+            p(45,'طقم بيجاما برينت زهور','sleepwear',490,20,'طقم بيجاما قطني بطبعات زهور ناعمة',['S','M','L','XL','XXL'],['#f5e6d3','#e8d5c4','#d4c5b9'],'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=400&h=500&fit=crop',false),
+            p(46,'مشد كامل للجسم سيملس','shapewear',680,22,'مشد كامل للجسم بدون خياطات ينحت القوام',['S','M','L','XL','XXL'],['#d4c5b9','#2d2422','#d9a5b3'],'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=400&h=500&fit=crop',false),
+            p(47,'مشد خصر عالي تحكم قوي','shapewear',520,27,'مشد خصر عالي بتحكم قوي يمنحك قوام الساعة الرملية',['M','L','XL','XXL'],['#2d2422','#d4c5b9','#2c2c2c'],'https://images.unsplash.com/photo-1618245228186-b4ee5723ebc5?w=400&h=500&fit=crop',false),
+            p(48,'شورت تشكيل رفع المؤخرة','shapewear',450,18,'شورت تشكيل بتقنية رفع المؤخرة',['S','M','L','XL'],['#d4c5b9','#2d2422','#d9a5b3'],'https://images.unsplash.com/photo-1571736772453-0e1f704342b6?w=400&h=500&fit=crop',false),
+            p(49,'بادي تشكيل أكتاف مفتوحة','shapewear',580,24,'بادي تشكيل بأكتاف مفتوحة مثالي تحت الفساتين',['S','M','L','XL'],['#d4c5b9','#2d2422','#fcf8f5'],'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=400&h=500&fit=crop',false),
+            p(50,'مشد ما بعد الولادة','shapewear',620,16,'مشد طبي مريح لما بعد الولادة',['M','L','XL','XXL'],['#d4c5b9','#2d2422','#c9b99a'],'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&h=500&fit=crop',false),
+            p(51,'حزام خصر مطاط','shapewear',380,29,'حزام خصر مطاطي عالي الجودة',['S','M','L','XL'],['#2d2422','#d9a5b3','#2c2c2c'],'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=500&fit=crop',false),
+            p(52,'مشد فخذين سيملس','shapewear',420,21,'مشد فخذين بدون خياطات ينعم منطقة الفخذين',['S','M','L','XL','XXL'],['#d4c5b9','#2d2422','#f5e6d3'],'https://images.unsplash.com/photo-1567789884554-0b844b3b1d4f?w=400&h=500&fit=crop',false),
+            p(53,'بادي تشكيل ظهر مفتوح','shapewear',550,26,'بادي تشكيل بتصميم ظهر مفتوح منخفض',['S','M','L'],['#d4c5b9','#2d2422','#d9a5b3'],'https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?w=400&h=500&fit=crop',true),
+            p(54,'مشد صدرية بدون حمالات','shapewear',600,15,'مشد صدرية بدون حمالات مع أسلاك داعمة',['S','M','L','XL'],['#2d2422','#d4c5b9','#800020'],'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&h=500&fit=crop',false),
+            p(55,'طقم تشكيل كامل ٣ قطع','shapewear',780,30,'طقم تشكيل متكامل من ٣ قطع',['S','M','L','XL','XXL'],['#d4c5b9','#2d2422','#d9a5b3'],'https://images.unsplash.com/photo-1612981737834-f8a2e1b3d4f3?w=400&h=500&fit=crop',true),
+        ];
+
+        const homeReviews = [
+            {stars:5,textAr:'الخامة الساتان وهمية بجد، ناعمة جداً على الجسم وشكلها في اللبس يجنن. التغليف كمان كان شيك أوي ينفع هدية. تسلم إيديكم',author:'نورهان',date:'منذ ٣ أيام'},
+            {stars:4,textAr:'المقاسات مظبوطة بالملي! كنت خايفة يطلع ضيق عشان الأونلاين بس طلع بيرفكت. الخياطة نضيفة جداً وتستاهل سعرها بصراحة.',author:'دعاء م.',date:'منذ ٥ أيام'},
+            {stars:5,textAr:'أنا أول مرة أجرب أطلب من عندكم ومبسوطة جداً بالتجربة. البنوتة بتاعت خدمة العملاء ذوق جداً وساعدتني أختار المقاس الصح.',author:'شيرين',date:'منذ أسبوع'},
+            {stars:5,textAr:'الروب القطيفة طلع دافي جداً وشكله فخم، بنتي هي اللي طلبتهولي وعجبني أوي ومريح جداً في اللبس. شكراً ليكم بجد.',author:'مدام سميحة',date:'منذ أسبوعين'},
+            {stars:4,textAr:'طلبت طقمين داخلي، القطن بتاعهم مريح جداً ومش بيحرر خالص في الصيف. بس ياريت توفروا ألوان تانية قريب.',author:'سارة',date:'منذ ٣ أسابيع'},
+            {stars:5,textAr:'غسلته كذا مرة ولسه محتفظ بلونه وشكله، بجد الكواليتي بتاعتكم ممتازة وتعيش. بقيتوا مكاني المفضل لبس البيت.',author:'رانيا',date:'منذ شهر'},
+        ];
+
+        const productReviews = [
+            {stars:5,textAr:'الخامة كأنك مش لابسة حاجة من كتر ما هي خفيفة ومريحة. هطلب منه لون تاني أكيد قريب أوي.',author:'ميرنا',date:'منذ يومين'},
+            {stars:4,textAr:'حلو أوي في اللبس، بس حسيت إن الكب كان محتاج يكون أوسع سنة صغيرة، بس غير كده ممتاز كخامة وتقفيل.',author:'علا',date:'منذ ٤ أيام'},
+            {stars:5,textAr:'ولا غلطة! الدانتيل ناعم ومش بيشوك خالص زي حاجات تانية جربتها من أماكن تانية. سعره فيه بصراحة.',author:'هانيا',date:'منذ أسبوع'},
+            {stars:5,textAr:'صاحبتي رشحتلي الموقع ومندمتش أبداً. التوصيل كان سريع جداً والباكيدجنج يفتح النفس ومقاسه مظبوط.',author:'سماح',date:'منذ ١٠ أيام'},
+        ];
+
+        function detectLanguage(){currentLang='ar';applyLanguage();}
+        function applyLanguage(){const body=document.body;if(currentLang==='ar'){body.dir='rtl';body.lang='ar';body.classList.remove('ltr');document.getElementById('langToggle').textContent='English';}else{body.dir='ltr';body.lang='en';body.classList.add('ltr');document.getElementById('langToggle').textContent='العربية';}updateUserUI();renderCurrentPage();renderCart();}
+        function toggleLanguage(){currentLang=currentLang==='ar'?'en':'ar';applyLanguage();}
+        function getProductName(p){return p.nameAr;}
+        function getProductDesc(p){return p.descAr;}
+        function getReviewText(r){return r.textAr;}
+        function getOriginalPrice(sp,discountPct){return Math.round(sp/(1-discountPct/100)/10)*10;}
+        function getShippingCost(gov){return CAIRO_GIZA_GOVERNORATES.includes(gov)?SHIPPING_CAIRO_GIZA:SHIPPING_OTHER;}
+        function updateUserUI(){const btn=document.getElementById('userBtn');const label=document.getElementById('userBtnLabel');if(currentUser){btn.classList.add('logged-in');label.textContent=currentUser.name?currentUser.name.split(' ')[0]:(currentLang==='ar'?'حسابي':'Account');}else{btn.classList.remove('logged-in');label.textContent=currentLang==='ar'?'حسابي':'Account';}}
+
+        function navigateTo(page,productId=null){currentPage=page;selectedProductId=productId;selectedSize=null;selectedColor=null;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-links a[data-page]').forEach(a=>a.classList.remove('active'));const tp=document.getElementById('page-'+page);if(tp)tp.classList.add('active');const nl=document.querySelector(`.nav-links a[data-page="${page}"]`);if(nl)nl.classList.add('active');document.getElementById('navLinks').classList.remove('open');renderCurrentPage();window.scrollTo({top:0,behavior:'smooth'});}
+        function renderCurrentPage(){switch(currentPage){case'home':renderHomePage();break;case'homewear':renderCategoryPage('homewear','homewear_title');break;case'lingerie':renderCategoryPage('lingerie','lingerie_title');break;case'sleepwear':renderCategoryPage('sleepwear','sleepwear_title');break;case'shapewear':renderCategoryPage('shapewear','shapewear_title');break;case'newarrivals':renderNewArrivalsPage();break;case'product-detail':renderProductDetailPage();break;default:renderHomePage();}}
+        function getProductImgUrl(product,size){if(product.imgUrl&&product.imgUrl.includes('unsplash')){return product.imgUrl.replace('w=400&h=500',size||'w=400&h=500');}return product.imgUrl||`https://placehold.co/${size||'400x500'}/f4ede6/b8865c?text=${encodeURIComponent(getProductName(product).substring(0,12))}`;}
+
+        function renderProductCard(product){
+            const imgUrl=getProductImgUrl(product,'w=400&h=500');const isNew=product.isNew?'<span class="badge-new">NEW</span>':'';const op=getOriginalPrice(product.price,product.discountPct);
+            return `<div class="product-card" onclick="navigateTo('product-detail',${product.id})"><div class="product-card-img">${isNew}<img src="${imgUrl}" alt="${getProductName(product)}" class="placeholder-img" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #f4ede6, #e8dcd5)';this.style.display='none';"><div class="img-overlay"></div></div><div class="product-card-body"><div class="product-name">${getProductName(product)}</div><div class="product-cat">${t('nav_'+product.category)}</div><div class="price-wrapper"><span class="original-price">${op} ${t('egp')}</span><span class="sale-price">${product.price} ${t('egp')}</span><span class="discount-badge">-${product.discountPct}%</span></div></div></div>`;
+        }
+
+        function renderCategorySection(category,titleKey){const catProducts=products.filter(p=>p.category===category).slice(0,4);return `<div class="category-section"><h2 class="section-title" onclick="navigateTo('${category}')">${t(titleKey)} <span class="arrow">→</span></h2><div class="product-grid">${catProducts.map(p=>renderProductCard(p)).join('')}</div><div class="view-all-link"><a onclick="navigateTo('${category}')">${t('view_all')} (${products.filter(p=>p.category===category).length}) →</a></div></div>`;}
+        function renderHomePage(){document.getElementById('page-home').innerHTML=`<div class="hero"><h1>${t('hero_title').replace('أناقة تلامس روحك','أناقة تلامس <span class="accent">روحك</span>')}</h1><p>${t('hero_sub')}</p><p class="slogan">✨ ${t('slogan')} ✨</p><div class="birthday-banner"><span class="icon">🎂</span> ${t('birthday_banner').replace(/\n/g,'<br>')}</div><button class="btn-hero" onclick="scrollToCategories()">${t('hero_btn')}</button></div><h2 class="section-title" id="categoriesSection">${t('featured')}</h2>${renderCategorySection('homewear','homewear_title')}${renderCategorySection('lingerie','lingerie_title')}${renderCategorySection('sleepwear','sleepwear_title')}${renderCategorySection('shapewear','shapewear_title')}<h2 class="section-title">${t('home_reviews_title')}</h2><div class="reviews-grid">${homeReviews.map(r=>renderReviewCard(r)).join('')}</div>`;}
+        function scrollToCategories(){document.getElementById('categoriesSection')?.scrollIntoView({behavior:'smooth'});}
+        function renderCategoryPage(category,titleKey){const cp=products.filter(p=>p.category===category);document.getElementById('page-'+category).innerHTML=`<h2 class="section-title">${t(titleKey)} (${cp.length})</h2><div class="product-grid">${cp.map(p=>renderProductCard(p)).join('')}</div>`;}
+        function renderNewArrivalsPage(){const np=products.filter(p=>p.isNew);document.getElementById('page-newarrivals').innerHTML=`<h2 class="section-title">${t('new_title')} (${np.length})</h2><div class="product-grid">${np.map(p=>renderProductCard(p)).join('')}</div>`;}
+
+        function renderProductDetailPage(){
+            const container=document.getElementById('page-product-detail');const product=products.find(p=>p.id===selectedProductId);
+            if(!product){container.innerHTML='<p style="text-align:center;padding:3rem;">المنتج غير موجود</p>';return;}
+            const imgUrl=getProductImgUrl(product,'w=600&h=750');const op=getOriginalPrice(product.price,product.discountPct);
+            const relatedProducts=products.filter(p=>p.category===product.category&&p.id!==product.id).slice(0,10);
+            const currentVisitors=Math.floor(Math.random()*22)+1;
+            const monthlyCount=getMonthlyPurchaseCount(product.id);
+            const purchaseText=t('purchased_last_month').replace('{count}',monthlyCount);
+            container.innerHTML=`<button class="btn-back" onclick="navigateTo('${product.category}')">${t('back')}</button><div class="product-detail-container"><div class="product-detail-img"><img src="${imgUrl}" alt="${getProductName(product)}" class="placeholder-img" onerror="this.parentElement.style.background='linear-gradient(135deg, #f4ede6, #e8dcd5)';this.style.display='none';"><div class="detail-visitors"><span class="live-dot"></span> ${currentVisitors} ${currentLang==='ar'?'زائرات يتصفحن الآن':'shoppers viewing now'}</div></div><div class="product-detail-info"><h2>${getProductName(product)}</h2><div class="detail-price-wrapper"><span class="detail-original">${op} ${t('egp')}</span><span class="detail-sale">${product.price} ${t('egp')}</span><span class="detail-discount">خصم ${product.discountPct}%</span></div><p class="detail-desc">${getProductDesc(product)}</p><div class="purchase-count">📦 ${purchaseText}</div><div><strong style="color:var(--text-secondary);font-size:0.85rem;">${t('size')}:</strong><div class="size-selector" id="sizeSelector">${product.sizes.map(s=>`<button class="size-btn" data-size="${s}" onclick="selectSize('${s}',this)">${s}</button>`).join('')}</div></div><div><strong style="color:var(--text-secondary);font-size:0.85rem;">${t('color')}:</strong><div class="color-selector" id="colorSelector">${product.colors.map(c=>`<button class="color-btn" data-color="${c}" style="background:${c};" onclick="selectColor('${c}',this)"></button>`).join('')}</div></div><button class="btn-add-cart" onclick="addToCartFromDetail(${product.id})">${t('add_to_cart')}</button></div></div><h3 class="section-title" style="font-size:1.4rem;">${t('reviews_title')}</h3><div class="reviews-grid">${productReviews.map(r=>renderReviewCard(r)).join('')}</div>${relatedProducts.length?`<div class="related-section"><h3 class="section-title">${t('related_products')}</h3><div class="product-grid">${relatedProducts.map(p=>renderProductCard(p)).join('')}</div></div>`:''}`;
+        }
+
+        function renderReviewCard(review){const stars='★'.repeat(review.stars)+'☆'.repeat(5-review.stars);return `<div class="review-card"><div class="review-stars">${stars}</div><p class="review-text">${getReviewText(review)}</p><div class="review-author"><span class="verified-badge">✅ ${t('verified')}</span> — ${review.author}</div><div class="review-date">${review.date}</div></div>`;}
+        function selectSize(size,btn){selectedSize=size;document.querySelectorAll('#sizeSelector .size-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}
+        function selectColor(color,btn){selectedColor=color;document.querySelectorAll('#colorSelector .color-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}
+
+        function addToCartFromDetail(productId){const product=products.find(p=>p.id===productId);if(!product)return;if(!selectedSize){showToast(currentLang==='ar'?'الرجاء اختيار المقاس':'Please select a size');return;}if(!selectedColor){showToast(currentLang==='ar'?'الرجاء اختيار اللون':'Please select a color');return;}const cartItem={productId:product.id,nameAr:product.nameAr,price:product.price,discountPct:product.discountPct,size:selectedSize,color:selectedColor,imgUrl:product.imgUrl,imgSeed:product.imgSeed,quantity:1};const existingIndex=cart.findIndex(ci=>ci.productId===productId&&ci.size===selectedSize&&ci.color===selectedColor);if(existingIndex>=0)cart[existingIndex].quantity+=1;else cart.push(cartItem);saveCart();renderCart();showToast(currentLang==='ar'?'✅ تمت الإضافة إلى السلة':'✅ Added to cart');selectedSize=null;selectedColor=null;renderProductDetailPage();}
+        function removeFromCart(index){cart.splice(index,1);saveCart();renderCart();}
+        function saveCart(){localStorage.setItem('velvetRoseCart',JSON.stringify(cart));updateCartCount();}
+        function updateCartCount(){document.getElementById('cartCount').textContent=cart.reduce((sum,i)=>sum+i.quantity,0);}
+
+        function renderCart(){const cic=document.getElementById('cartItems');const cf=document.getElementById('cartFooter');if(cart.length===0){cic.innerHTML=`<div class="cart-empty">${t('cart_empty')}</div>`;cf.innerHTML='';}else{cic.innerHTML=cart.map((item,index)=>{const imgUrl=item.imgUrl?item.imgUrl.replace('w=400&h=500','w=70&h=90'):`https://placehold.co/70x90/f4ede6/b8865c?text=${encodeURIComponent(item.nameAr.substring(0,5))}`;return`<div class="cart-item"><div class="cart-item-img"><img src="${imgUrl}" alt="" class="placeholder-img" onerror="this.parentElement.style.background='#e8dcd5';this.style.display='none';"></div><div class="cart-item-info"><div class="cart-item-name">${item.nameAr}</div><div class="cart-item-meta">${t('size')}: ${item.size} | ${t('color')}: <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${item.color};vertical-align:middle;border:1px solid #ccc;"></span> | x${item.quantity}</div><div class="cart-item-price">${item.price} ${t('egp')}</div></div><button class="cart-item-remove" onclick="removeFromCart(${index})">🗑️</button></div>`;}).join('');const subtotal=cart.reduce((sum,item)=>sum+(item.price*item.quantity),0);cf.innerHTML=`<div class="cart-total"><span>${t('total')}</span><span>${subtotal} ${t('egp')}</span></div><button class="btn-checkout" onclick="openCheckout()">${t('checkout_btn')}</button>`;}}
+        function toggleCart(){const overlay=document.getElementById('cartOverlay');const drawer=document.getElementById('cartDrawer');if(drawer.classList.contains('open')){drawer.classList.remove('open');overlay.classList.remove('open');document.body.style.overflow='';}else{renderCart();drawer.classList.add('open');overlay.classList.add('open');document.body.style.overflow='hidden';}}
+
+        function openAccountModal(){const modal=document.getElementById('accountModal');const container=document.getElementById('accountFormContainer');if(currentUser){container.innerHTML=`<h3>${t('account_title')}</h3><div class="account-info-row"><strong>${t('full_name')}:</strong> ${currentUser.name}</div><div class="account-info-row"><strong>${t('phone')}:</strong> ${currentUser.phone}</div>${currentUser.phone2?`<div class="account-info-row"><strong>${t('phone2')}:</strong> ${currentUser.phone2}</div>`:''}${currentUser.email?`<div class="account-info-row"><strong>${t('email')}:</strong> ${currentUser.email}</div>`:''}<div class="account-info-row"><strong>${t('governorate')}:</strong> ${currentUser.governorate||'—'}</div><div class="account-info-row"><strong>${t('address')}:</strong> ${currentUser.address||'—'}</div><button class="btn-logout" onclick="logout()">${t('logout_btn')}</button><button class="btn-cancel-checkout" onclick="closeAccountModal()">${t('cancel')}</button>`;}else{container.innerHTML=`<h3>${accountTab==='login'?t('login_title'):t('signup_title')}</h3><div class="account-tabs"><button class="account-tab ${accountTab==='login'?'active':''}" onclick="switchAccountTab('login')">${t('login_title')}</button><button class="account-tab ${accountTab==='signup'?'active':''}" onclick="switchAccountTab('signup')">${t('signup_title')}</button></div><div id="accountFields"></div><button class="btn-cancel-checkout" onclick="closeAccountModal()">${t('cancel')}</button>`;renderAccountFields();}modal.classList.add('open');document.body.style.overflow='hidden';}
+        function closeAccountModal(){document.getElementById('accountModal').classList.remove('open');document.body.style.overflow='';}
+        function switchAccountTab(tab){accountTab=tab;openAccountModal();}
+        function renderAccountFields(){const fields=document.getElementById('accountFields');if(!fields)return;if(accountTab==='login'){fields.innerHTML=`<div class="form-group"><label>${t('phone')}</label><input type="tel" id="loginPhone" placeholder="${currentLang==='ar'?'01xxxxxxxxx':'e.g. 01xxxxxxxxx'}" required></div><div class="form-group"><label>${t('password')}</label><input type="password" id="loginPassword" placeholder="••••••" required></div><button class="btn-account-action" onclick="handleLogin()">${t('login_btn')}</button><div class="login-link-row">${t('no_account')} <a onclick="switchAccountTab('signup')">${t('signup_here')}</a></div>`;}else{fields.innerHTML=`<div class="form-group"><label>${t('full_name')}</label><input type="text" id="signupName" placeholder="${currentLang==='ar'?'الاسم بالكامل':'Full name'}" required></div><div class="form-group"><label>${t('phone')}</label><input type="tel" id="signupPhone" placeholder="${currentLang==='ar'?'01xxxxxxxxx':'e.g. 01xxxxxxxxx'}" required></div><div class="form-group"><label>${t('phone2')}</label><input type="tel" id="signupPhone2" placeholder="${currentLang==='ar'?'اختياري':'Optional'}"></div><div class="form-group"><label>${t('email')}</label><input type="email" id="signupEmail" placeholder="example@email.com"></div><div class="form-group"><label>${t('governorate')}</label><select id="signupGovernorate"><option value="">${currentLang==='ar'?'اختر المحافظة':'Select governorate'}</option>${egyptGovernorates.map(g=>`<option value="${g}">${g}</option>`).join('')}</select></div><div class="form-group"><label>${t('address')}</label><textarea id="signupAddress" rows="2" placeholder="${currentLang==='ar'?'العنوان بالتفصيل':'Detailed address'}"></textarea></div><div class="form-group"><label>${t('password')}</label><input type="password" id="signupPassword" placeholder="••••••" required></div><div class="form-group"><label>${t('password_confirm')}</label><input type="password" id="signupPasswordConfirm" placeholder="••••••" required></div><button class="btn-account-action" onclick="handleSignup()">${t('signup_btn')}</button><div class="login-link-row">${t('have_account')} <a onclick="switchAccountTab('login')">${t('login_here')}</a></div>`;}document.querySelectorAll('.account-tab').forEach(t=>{const isLogin=t.getAttribute('onclick')?.includes('login');t.classList.toggle('active',accountTab==='login'?isLogin:!isLogin);});}
+        function handleLogin(){const phone=document.getElementById('loginPhone')?.value?.trim();const password=document.getElementById('loginPassword')?.value?.trim();if(!phone||!password){showToast(t('fill_all'));return;}const acc=accounts[phone];if(!acc||acc.password!==password){showToast(t('login_failed'));return;}currentUser={phone,name:acc.name,phone2:acc.phone2||'',email:acc.email||'',governorate:acc.governorate||'',address:acc.address||'',password:acc.password};localStorage.setItem('velvetRoseUser',JSON.stringify(currentUser));updateUserUI();closeAccountModal();showToast((currentLang==='ar'?'👋 مرحباً بعودتك ':'👋 Welcome back ')+currentUser.name);}
+        function handleSignup(){const name=document.getElementById('signupName')?.value?.trim();const phone=document.getElementById('signupPhone')?.value?.trim();const phone2=document.getElementById('signupPhone2')?.value?.trim();const email=document.getElementById('signupEmail')?.value?.trim();const governorate=document.getElementById('signupGovernorate')?.value?.trim();const address=document.getElementById('signupAddress')?.value?.trim();const password=document.getElementById('signupPassword')?.value?.trim();const passwordConfirm=document.getElementById('signupPasswordConfirm')?.value?.trim();if(!name||!phone||!password){showToast(t('fill_all'));return;}if(password!==passwordConfirm){showToast(t('password_mismatch'));return;}if(accounts[phone]){showToast(t('phone_exists'));return;}const acc={name,phone,phone2,email,governorate,address,password};accounts[phone]=acc;localStorage.setItem('velvetRoseAccounts',JSON.stringify(accounts));currentUser=acc;localStorage.setItem('velvetRoseUser',JSON.stringify(currentUser));updateUserUI();closeAccountModal();showToast(t('account_saved'));}
+        function logout(){currentUser=null;localStorage.removeItem('velvetRoseUser');updateUserUI();closeAccountModal();showToast(currentLang==='ar'?'تم تسجيل الخروج':'Logged out');}
+
+        function selectPayment(method){selectedPayment=method;document.querySelectorAll('.payment-method-btn').forEach(b=>b.classList.remove('selected'));document.querySelector(`.payment-method-btn[data-method="${method}"]`)?.classList.add('selected');document.getElementById('walletFields').classList.toggle('active',method==='wallet');document.getElementById('visaFields').classList.toggle('active',method==='visa');updateShippingDisplay();}
+        function updateShippingDisplay(){const governorate=document.getElementById('checkoutGovernorate')?.value||'';const shippingCost=governorate?getShippingCost(governorate):0;const subtotal=cart.reduce((sum,item)=>sum+(item.price*item.quantity),0);const totalWithShipping=subtotal+shippingCost;const shippingEl=document.getElementById('shippingCostDisplay');const totalEl=document.getElementById('checkoutTotalDisplay');if(shippingEl)shippingEl.textContent=shippingCost?`${shippingCost} ${t('egp')}`:'—';if(totalEl)totalEl.textContent=`${totalWithShipping} ${t('egp')}`;const walletAmt=document.getElementById('walletAmount');if(walletAmt)walletAmt.textContent=`${totalWithShipping} ${t('egp')}`;}
+
+        function openCheckout(){const modal=document.getElementById('checkoutModal');const fc=document.getElementById('checkoutFormContainer');const subtotal=cart.reduce((sum,item)=>sum+(item.price*item.quantity),0);const savedName=currentUser?.name||'';const savedPhone=currentUser?.phone||'';const savedPhone2=currentUser?.phone2||'';const savedEmail=currentUser?.email||'';const savedGovernorate=currentUser?.governorate||'';const savedAddress=currentUser?.address||'';fc.innerHTML=`<h3>${t('checkout_title')}</h3>${!currentUser?`<div class="login-link-row">${t('have_account')} <a onclick="closeCheckout();openAccountModal();">${t('login_here')}</a> – ${currentLang==='ar'?'بياناتك هتتعبا تلقائي':'Your data will auto-fill'}</div>`:`<div style="text-align:center;font-size:0.8rem;color:var(--accent);margin-bottom:0.5rem;font-weight:600;">👤 ${t('logged_in_as')}: ${currentUser.name}</div>`}<div class="form-group"><label>${t('full_name')} *</label><input type="text" id="checkoutName" value="${savedName}" required></div><div class="form-group"><label>${t('phone')} *</label><input type="tel" id="checkoutPhone" value="${savedPhone}" required></div><div class="form-group"><label>${t('phone2')}</label><input type="tel" id="checkoutPhone2" value="${savedPhone2}"></div><div class="form-group"><label>${t('email')}</label><input type="email" id="checkoutEmail" value="${savedEmail}"></div><div class="form-group"><label>${t('governorate')} *</label><select id="checkoutGovernorate" onchange="updateShippingDisplay()" required><option value="">${currentLang==='ar'?'اختر المحافظة':'Select governorate'}</option>${egyptGovernorates.map(g=>`<option value="${g}" ${g===savedGovernorate?'selected':''}>${g}</option>`).join('')}</select></div><div class="shipping-note">${t('free_shipping_note')}</div><div class="form-group"><label>${t('address')} *</label><textarea id="checkoutAddress" rows="3" required>${savedAddress}</textarea></div><div class="form-group"><label>${t('payment_method')}</label><div class="payment-methods"><button class="payment-method-btn selected" data-method="cod" onclick="selectPayment('cod')">💰 ${t('cod')}</button><button class="payment-method-btn" data-method="wallet" onclick="selectPayment('wallet')">📱 ${t('wallet')}</button><button class="payment-method-btn" data-method="visa" onclick="selectPayment('visa')">💳 ${t('visa')}</button></div></div><div class="wallet-fields" id="walletFields"><div class="wallet-sim"><div class="wallet-logo">💳 فودافون كاش</div><div class="wallet-amount" id="walletAmount">${subtotal} ${t('egp')}</div><div class="wallet-to">${t('wallet_sim_to')}: <strong>******580</strong></div><div class="wallet-ref">${t('wallet_sim_ref')}: <strong>${Math.random().toString(36).substring(2,10).toUpperCase()}</strong></div><button class="btn-confirm-wallet" onclick="submitOrder()">${t('wallet_confirm')}</button></div></div><div class="visa-fields" id="visaFields"><div class="form-group"><label>${t('visa_card_number')} *</label><input type="text" id="visaCardNumber" placeholder="0000 0000 0000 0000" maxlength="19"></div><div class="form-group"><label>${t('visa_holder')} *</label><input type="text" id="visaHolder" placeholder="${currentLang==='ar'?'اسم حامل البطاقة':'Cardholder name'}"></div><div class="visa-row"><div class="form-group"><label>${t('visa_expiry')} *</label><input type="text" id="visaExpiry" placeholder="MM/YY" maxlength="5"></div><div class="form-group"><label>${t('visa_cvv')} *</label><input type="password" id="visaCVV" placeholder="CVV" maxlength="4"></div></div></div><div style="display:flex;justify-content:space-between;margin:1rem 0;padding:0.8rem;background:var(--bg-secondary);border-radius:8px;border:1px solid var(--border-light);"><span>${t('shipping')}:</span><span id="shippingCostDisplay">—</span></div><div style="display:flex;justify-content:space-between;margin:1rem 0;font-size:1.2rem;font-weight:700;color:var(--accent);"><span>${t('total')}:</span><span id="checkoutTotalDisplay">${subtotal} ${t('egp')}</span></div><div class="delivery-note">${t('delivery_note')}</div><label class="save-info-row"><input type="checkbox" id="saveInfoCheck" ${currentUser?'checked':''}> ${t('save_info')}</label><button class="btn-submit-order" onclick="submitOrder()">${t('submit_order')}</button><button class="btn-cancel-checkout" onclick="closeCheckout()">${t('cancel')}</button>`;modal.classList.add('open');document.body.style.overflow='hidden';selectedPayment='cod';document.querySelectorAll('.payment-method-btn').forEach(b=>b.classList.remove('selected'));document.querySelector('.payment-method-btn[data-method="cod"]')?.classList.add('selected');document.getElementById('walletFields').classList.remove('active');document.getElementById('visaFields').classList.remove('active');updateShippingDisplay();}
+        function closeCheckout(){document.getElementById('checkoutModal').classList.remove('open');document.body.style.overflow='';}
+
+        function submitOrder(){
+            const name=document.getElementById('checkoutName')?.value?.trim();const phone=document.getElementById('checkoutPhone')?.value?.trim();const phone2=document.getElementById('checkoutPhone2')?.value?.trim();const email=document.getElementById('checkoutEmail')?.value?.trim();const governorate=document.getElementById('checkoutGovernorate')?.value?.trim();const address=document.getElementById('checkoutAddress')?.value?.trim();const saveInfo=document.getElementById('saveInfoCheck')?.checked;
+            if(!name||!phone||!governorate||!address){showToast(t('fill_all'));return;}
+            const subtotal=cart.reduce((sum,item)=>sum+(item.price*item.quantity),0);const shippingCost=getShippingCost(governorate);const total=subtotal+shippingCost;
+            if(saveInfo){const password=currentUser?.password||(accounts[phone]?.password)||'123456';const acc={name,phone,phone2,email,governorate,address,password:accounts[phone]?.password||password};if(!accounts[phone]){accounts[phone]=acc;}else{accounts[phone]={...accounts[phone],...acc};}localStorage.setItem('velvetRoseAccounts',JSON.stringify(accounts));currentUser=acc;localStorage.setItem('velvetRoseUser',JSON.stringify(currentUser));updateUserUI();}
+            
+            let waMsg=`🛍️ *طلب جديد من متجر ${STORE_NAME}*\n━━━━━━━━━━━━━━━━\n👤 *العميلة:* ${name}\n📞 *الهاتف:* ${phone}\n`;if(phone2)waMsg+=`📞 *هاتف آخر:* ${phone2}\n`;if(email)waMsg+=`📧 *البريد:* ${email}\n`;waMsg+=`📍 *المحافظة:* ${governorate}\n📍 *العنوان:* ${address}\n━━━━━━━━━━━━━━━━\n📦 *تفاصيل الطلب:*\n`;cart.forEach((item,i)=>{waMsg+=`  ${i+1}. ${item.nameAr} - مقاس: ${item.size} | لون: ⚪ | ×${item.quantity} = ${item.price*item.quantity} ${t('egp')}\n`;});waMsg+=`━━━━━━━━━━━━━━━━\n💰 *المجموع الفرعي:* ${subtotal} ${t('egp')}\n🚚 *الشحن:* ${shippingCost} ${t('egp')}\n💰 *الإجمالي:* ${total} ${t('egp')}\n`;
+            if(selectedPayment==='wallet'){waMsg+=`\n📱 *طريقة الدفع: فودافون كاش*\n`;}else if(selectedPayment==='visa'){waMsg+=`\n💳 *طريقة الدفع: بطاقة فيزا*\n`;}else{waMsg+=`\n💰 *طريقة الدفع: الدفع عند الاستلام*\n`;}
+            waMsg+=`━━━━━━━━━━━━━━━━\n🚚 *التوصيل:* خلال ٣ أيام عمل\n📅 *التاريخ:* ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━━━\n✨ إشعار آلي من الموقع`;
+            
+            cart=[];saveCart();renderCart();closeCheckout();document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartDrawer').classList.remove('open');document.body.style.overflow='';showToast(t('order_success'));navigateTo('home');
+            
+            const TELEGRAM_BOT_TOKEN = '8865642646:AAHIOXn4M-ConQuCq88kfVob90fZDW0c8yw';
+            const TELEGRAM_CHAT_ID = '536519442';
+            const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+            fetch(telegramUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: waMsg,
+                    parse_mode: 'Markdown'
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Notification sent successfully:', data))
+            .catch(error => console.error('Error sending notification:', error));
+        }
+
+        function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.add('show');clearTimeout(toast._timeout);toast._timeout=setTimeout(()=>toast.classList.remove('show'),3500);}
+        function toggleMobileMenu(){document.getElementById('navLinks').classList.toggle('open');}
+        function init(){detectLanguage();updateCartCount();updateUserUI();renderCart();renderHomePage();document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){if(document.getElementById('checkoutModal').classList.contains('open'))closeCheckout();else if(document.getElementById('accountModal').classList.contains('open'))closeAccountModal();else if(document.getElementById('cartDrawer').classList.contains('open'))toggleCart();}});}
+        init();
+    </script>
+</body>
+</html>
